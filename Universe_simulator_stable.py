@@ -1,6 +1,7 @@
 #information
 #Phase 2A:Orbital mechanics: successful. Newtonian mechanics for two bodies in space worked.
-#Phase 2B:N-body simulation: IN OPERATION.
+#Phase 2B:N-body simulation: Successful.
+#Phase 2C:Front-end development: Successful, stable version released.
 
 
 import numpy as np
@@ -11,7 +12,7 @@ rows = []
 
 #essential constants
 DT = 0.01
-MAX_TIME = 1000.0
+MAX_TIME = 16.0
 current_time = 0.0
 e = 1.0 #Elasticity
 collision = 0
@@ -73,7 +74,7 @@ def total_momentum(obj):
     print("Momentum:", p)
 
 
-#1) New updated N-body gravity engine
+#1) New updated N-body gravity engine. No credits to Pollov
 def apply_gravity(obj):
 
     for i in obj:
@@ -124,7 +125,7 @@ def integrate(obj, dt):
         o.vel += 0.5 * (a + o.acc) * dt
 
 
-#3)Collision handler. Currently handles only two objects.
+#3)Collision handler. UNDER DEVELOPMENT.
 def resolve_collision(obj):
     b1 = obj[0]
     b2 = obj[1]
@@ -194,6 +195,88 @@ def logger(obj):
     #})
     #-----------------------------------------
 
+
+#5)Visual engine
+def simulator_visual(obj, df):
+    # plotter engine
+    #Giving colours and rendering sizes of objects. Not real radius - only rendered.
+    #Rendering is for temporary visual testing.
+    colors = {"Star1": "yellow", "Planet1": "deepskyblue", "Moon1": "red" }
+    render_size = {"Star1": 500, "Planet1": 4.57, "Moon1": 1.25}
+
+    #change background to black
+    plt.style.use("dark_background")
+    #size of canvas
+    fig, ax = plt.subplots(figsize=(10, 10))
+    for body in obj:
+
+        #Centre the star. change this to see how planet and moon's gravity affects the star.
+        star_x = df["Star1_x"]
+        star_y = df["Star1_y"]
+
+        #relative coordinates
+        x = df[f"{body.name}_x"] - star_x
+        y = df[f"{body.name}_y"] - star_y
+
+        #orbit plotting part.
+        #two arguments x and y for plotting
+        ax.plot(
+            x,
+            y,
+            color=colors[body.name], #Colour given for plot
+            linewidth=1, #width of plot line
+            alpha=0.7, #transparency. 0 = invisible, 1 = solid
+            label=body.name #labels of bodies
+        )
+
+        ax.scatter(
+            #iloc stores positions in a list. iloc[-1] is last recorded position
+            x.iloc[-1],
+            y.iloc[-1],
+            color=colors[body.name],
+            s=render_size[body.name],
+            #zorder decides what object has higher priority on a layer.
+            #if planet had more priority than star and both were kept at same position planet would appear above star.
+            zorder=10
+        )
+    #title
+    ax.set_title(
+        f"N-Body Simulation\nBodies: {len(obj)}",
+        fontsize=14
+    )
+
+    stats = (
+        f"dt = {DT}\n"
+        f"Time = {MAX_TIME}\n"
+        f"Steps = {len(df)}"
+    )
+    #adding text to the canvas
+    ax.text(
+        0.02,
+        0.02,
+        stats,
+        #this makes the coordinates screen coordinates, not physical coordinates.
+        #(0,0) is bottom left corner and (1,1) is top right corner.
+        transform=ax.transAxes
+    )
+
+    #removes numbering from both x and y axes.
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    #this part removes the boders
+    ax.spines['top'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    #set_aspect makes units equal. Scaling is done properly. Otherwise orbit would be circle and not ellpise
+    ax.set_aspect("equal")
+    #Legend builds the box with star1, planet1 and moon1
+    ax.legend()
+    #Display the grand plot!
+    plt.show()
+
+
 #Universe creator
 Star =   Uobjects("Star1", 10000.0, 2.0, 40.0, 40.0, 0, 0, 0, 0)
 Planet = Uobjects("Planet1", 100.0,0.5 , 20.0, 10.0, 17.6, 0, 0, 0)
@@ -220,16 +303,7 @@ while current_time < MAX_TIME:
 df = pd.DataFrame(rows)
 print(df.head())
 
-#plotter engine
-for body in objects:
-    plt.plot(
-        df[f"{body.name}_x"],
-        df[f"{body.name}_y"],
-        label=body.name
-    )
-plt.axis("equal")
-plt.legend()
-plt.show()
+simulator_visual(objects, df)
 
 #print(df[df["collided"] == 1])
 
