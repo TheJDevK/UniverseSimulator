@@ -1,16 +1,43 @@
 # Universe Simulator
 
-A Newtonian physics engine written in Python.
+A Newtonian gravity simulator written in Python.
 
 ## Features
 
-- Elastic collisions
-- N-body gravity
+- N-body gravitational simulation
 - Velocity Verlet integration
-- Momentum conservation
-- Approximate energy conservation
+- Energy tracking
+- Momentum conservation verification
+- Orbit visualization using Matplotlib
+- Configurable masses, positions and velocities
 
-## Status
+## Current Status
 
-Phase 2A complete
-Phase 2B Complete
+### Phase 2A
+Two-body orbital mechanics implemented.
+
+### Phase 2B
+N-body gravity engine implemented.
+
+### Phase 2C
+Visualization engine implemented.
+
+## Future Plans
+
+- Collision physics
+- Animated simulation
+- Galaxy generation
+- Barnes-Hut optimization
+- Relativity experiments
+
+## Example
+
+Star-Planet-Moon simulation using:
+
+G = 1
+
+Velocity Verlet integration
+
+Matplotlib rendering
+
+Has helped me learn application of verlet integration, Euler integration. Soon will apply Barnes-hut, Runge-kutta and so on. 

@@ -11,7 +11,7 @@ rows = []
 
 #essential constants
 DT = 0.01
-MAX_TIME = 1000 .0
+MAX_TIME = 1000.0
 current_time = 0.0
 e = 1.0 #Elasticity
 collision = 0
